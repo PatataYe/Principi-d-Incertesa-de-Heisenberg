@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Heisenberg Uncertainty Principle Simulator</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f7fa;
+        color: #333;
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .slider-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      input[type="range"] {
+        flex-grow: 1;
+        height: 10px;
+        -webkit-appearance: none;
+        background: #ddd;
+        border-radius: 5px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      #position-slider::-webkit-slider-thumb {
+        background: #3498db;
+      }
+      #momentum-slider::-webkit-slider-thumb {
+        background: #e74c3c;
+      }
+      .value-display {
+        min-width: 40px;
+        text-align: center;
+      }
+      .bar-container {
+        display: flex;
+        justify-content: space-around;
+        height: 200px;
+        margin-top: 30px;
+      }
+      .bar {
+        width: 40%;
+        display: flex;
+        flex-direction: column-reverse;
+        background: #eee;
+        border-radius: 5px 5px 0 0;
+        overflow: hidden;
+      }
+      .bar-fill {
+        width: 100%;
+        transition: height 0.3s ease;
+      }
+      #position-fill {
+        background: linear-gradient(to top, #3498db, #2980b9);
+      }
+      #momentum-fill {
+        background: linear-gradient(to top, #e74c3c, #c0392b);
+      }
+      .bar-label {
+        text-align: center;
+        padding: 5px;
+        color: black;
+        font-weight: bold;
+      }
+      .product-display {
+        margin-top: 20px;
+        padding: 10px;
+        background: #2c3e50;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+      }
+
+      .legend {
+        margin-top: 20px;
+        padding: 10px;
+        background: #19103b;
+        color: rgb(255, 255, 255);
+        border-radius: 15px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Heisenberg Uncertainty Principle Simulator </h1>
+    <p style="text-align: center; font-style: italic, bold">Δx · Δp ≥ ħ/2</p>
+
+    <div class="container">
+      <div class="slider-group">
+        <label>Position Certainty </label>
+        <div class="slider-container">
+          <input
+            type="range"
+            id="position-slider"
+            min="1"
+            max="100"
+            value="50"
+          />
+          <span id="position-value" class="value-display">50%</span>
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <label>Momentum Certainty </label>
+        <div class="slider-container">
+          <input
+            type="range"
+            id="momentum-slider"
+            min="1"
+            max="100"
+            value="50"
+          />
+          <span id="momentum-value" class="value-display">50%</span>
+        </div>
+      </div>
+
+      <div class="bar-container">
+        <div class="bar">
+          <div id="position-fill" class="bar-fill" style="height: 50%"></div>
+          <div class="bar-label">Position</div>
+        </div>
+        <div class="bar">
+          <div id="momentum-fill" class="bar-fill" style="height: 50%"></div>
+          <div class="bar-label">Momentum</div>
+        </div>
+      </div>
+
+      <div class="product-display">
+        Δx · Δp = <span id="uncertainty-product">0.25</span> (Minimum: 0.25)
+      </div>
+      <div class="legend">
+        <p>Δx: Position Uncertainty</p>
+        <p>Δp: Momentum Uncertainty</p>
+        <p>ħ: Planck's Constant</p>
+        <p>ħ/2: Minimum Uncertainty Product</p>
+    </div>
+
+    <script>
+      // Get DOM elements
+      const positionSlider = document.getElementById("position-slider");
+      const momentumSlider = document.getElementById("momentum-slider");
+      const positionValue = document.getElementById("position-value");
+      const momentumValue = document.getElementById("momentum-value");
+      const positionFill = document.getElementById("position-fill");
+      const momentumFill = document.getElementById("momentum-fill");
+      const productDisplay = document.getElementById("uncertainty-product");
+
+      // Constants
+      const MIN_PRODUCT = 0.25; // Represents ħ/2
+
+      // Update all displays
+      function updateDisplays(pos, mom) {
+        // Update percentage displays
+        positionValue.textContent = pos + "%";
+        momentumValue.textContent = mom + "%";
+
+        // Update bar heights
+        positionFill.style.height = pos + "%";
+        momentumFill.style.height = mom + "%";
+
+        // Calculate and display product
+        const deltaX = (101 - pos) / 100;
+        const deltaP = (101 - mom) / 100;
+        productDisplay.textContent = (deltaX * deltaP).toFixed(2);
+      }
+
+      // Handle slider changes
+      function handlePositionChange() {
+        const pos = parseInt(positionSlider.value);
+        const mom = Math.max(
+          1,
+          Math.min(100, Math.round(101 - 2500 / (101 - pos)))
+        );
+        momentumSlider.value = mom;
+        updateDisplays(pos, mom);
+      }
+
+      function handleMomentumChange() {
+        const mom = parseInt(momentumSlider.value);
+        const pos = Math.max(
+          1,
+          Math.min(100, Math.round(101 - 2500 / (101 - mom)))
+        );
+        positionSlider.value = pos;
+        updateDisplays(pos, mom);
+      }
+
+      // Add event listeners
+      positionSlider.addEventListener("input", handlePositionChange);
+      momentumSlider.addEventListener("input", handleMomentumChange);
+
+      // Initialize
+      updateDisplays(50, 50);
+    </script>
+  </body>
+</html>
